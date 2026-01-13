@@ -1,5 +1,5 @@
 {
-	"name": "n8n-nodes-meta-multipublisher",
+	"name": "n8n-nodes-meta-mpublisher",
 	"version": "1.0.0",
 	"description": "Publish to Instagram, Facebook Pages, and Threads (images, videos, reels, stories, carousels) via Meta Graph APIs.",
 	"keywords": [
