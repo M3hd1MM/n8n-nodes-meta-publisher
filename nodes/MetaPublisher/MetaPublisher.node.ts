@@ -24,6 +24,7 @@ import {
 	THREADS_PUBLISH_IMAGE,
 	THREADS_PUBLISH_TEXT,
 	THREADS_PUBLISH_VIDEO,
+	PUBLISH_FB_MULTI_PHOTO,
 } from './lib/constant';
 
 export class MetaPublisher implements INodeType {
@@ -127,6 +128,11 @@ export class MetaPublisher implements INodeType {
 						name: 'Publish Photo (FB Page)',
 						value: 'publishFbPhoto',
 						action: 'Publish photo photo facebook page',
+					},
+					{
+						name: 'Publish Multi-Photo (FB Page)',
+						value: PUBLISH_FB_MULTI_PHOTO,
+						action: 'Publish multiple photos on facebook page',
 					},
 					{
 						name: 'Publish Reel (FB Page)',
@@ -466,6 +472,55 @@ export class MetaPublisher implements INodeType {
 				displayOptions: {
 					show: { inputSource: ['fields'], resource: ['facebook'], operation: [PUBLISH_FB_PHOTO] },
 				},
+			},
+			{
+				displayName: 'Image URLs',
+				name: 'imageUrls',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				default: {},
+				required: true,
+				displayOptions: {
+					show: {
+						inputSource: ['fields'],
+						resource: ['facebook'],
+						operation: [PUBLISH_FB_MULTI_PHOTO],
+					},
+				},
+				options: [
+					{
+						displayName: 'Image',
+						name: 'image',
+						values: [
+							{
+								displayName: 'URL',
+								name: 'url',
+								type: 'string',
+								default: '',
+								required: true,
+								placeholder: 'https://example.com/image.jpg',
+							},
+						],
+					},
+				],
+				description: 'URLs of images to publish (2-10 images)',
+			},
+			{
+				displayName: 'Message',
+				name: 'fbMultiPhotoMessage',
+				type: 'string',
+				typeOptions: {
+					rows: 4,
+				},
+				default: '',
+				displayOptions: {
+					show: {
+						inputSource: ['fields'],
+						resource: ['facebook'],
+						operation: [PUBLISH_FB_MULTI_PHOTO],
+					},
+				},
+				description: 'Caption/message for the multi-photo post',
 			},
 
 			// FB Video
@@ -809,6 +864,28 @@ export class MetaPublisher implements INodeType {
 							const imageUrl = job.imageUrl ?? (this.getNodeParameter('imageUrl', i) as string);
 							const caption = job.caption ?? (this.getNodeParameter('caption', i, '') as string);
 							return OPS.publishFbPhoto(this, i, { pageId, imageUrl, caption });
+						}
+						case PUBLISH_FB_MULTI_PHOTO: {
+							// En mode fields: extraire les URLs du fixedCollection
+							let imageUrls: string[];
+							if (job.imageUrls) {
+								// Mode JSON: déjà un tableau
+								imageUrls = job.imageUrls;
+							} else {
+								// Mode fields: extraire du fixedCollection
+								const imagesCol = this.getNodeParameter('imageUrls', i, {}) as any;
+								imageUrls = (imagesCol.image || []).map((img: any) => img.url).filter(Boolean);
+							}
+							
+							const message = job.message 
+								?? job.caption 
+								?? (this.getNodeParameter('fbMultiPhotoMessage', i, '') as string);
+							
+							return OPS.publishFbMultiPhoto(this, i, {
+								pageId,
+								imageUrls,
+								message,
+							});
 						}
 						case PUBLISH_FB_VIDEO: {
 							const videoUrl = job.videoUrl ?? (this.getNodeParameter('videoUrl', i) as string);

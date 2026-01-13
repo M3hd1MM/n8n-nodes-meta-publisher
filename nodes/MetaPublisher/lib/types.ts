@@ -26,5 +26,7 @@ export type PublishResult = {
 	publishResult?: any; // media/thread object
 	result?: any; // FB photo response, etc.
 	videoId?: string; // FB video id
+	photoIds?: string[]; // <- AJOUTER pour multi-photo
+	photoCount?: number; // <- AJOUTER pour multi-photo
 	permalink?: any;
 };
