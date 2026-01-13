@@ -438,6 +438,48 @@ export class MetaPublisher implements INodeType {
 					},
 				},
 			},
+			{
+				displayName: 'User Tags',
+				name: 'userTags',
+				type: 'fixedCollection',
+				typeOptions: { multipleValues: true },
+				default: {},
+				description: 'Tag Instagram users on the image',
+				displayOptions: {
+					show: { inputSource: ['fields'], resource: ['instagram'], operation: [PUBLISH_CAROUSEL] },
+				},
+				options: [
+					{
+						displayName: 'Tag',
+						name: 'tag',
+						values: [
+							{
+								displayName: 'Username',
+								name: 'username',
+								type: 'string',
+								required: true,
+								default: '',
+							},
+							{
+								displayName: 'X Position (0–1)',
+								name: 'x',
+								type: 'number',
+								typeOptions: { minValue: 0, maxValue: 1 },
+								required: true,
+								default: '',
+							},
+							{
+								displayName: 'Y Position (0–1)',
+								name: 'y',
+								type: 'number',
+								typeOptions: { minValue: 0, maxValue: 1 },
+								required: true,
+								default: '',
+							},
+						],
+					},
+				],
+			},
 
 			/* ----------------------- FACEBOOK FIELDS ----------------------- */
 			{
