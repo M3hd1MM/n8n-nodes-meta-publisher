@@ -264,14 +264,14 @@ export const OPS = {
 							igUserId: a.igUserId,
 							url: it.url,
 							caption: it.caption,
-							it.userTags, // ← ADDED
+							userTags: it.userTags,
 						}
 					: {
 							kind: 'CAROUSEL_CHILD_VIDEO',
 							igUserId: a.igUserId,
 							url: it.url,
 							caption: it.caption,
-							it.userTags, // ← ADDED (IG accepts this)
+							userTags: it.userTags,
 						},
 			);
 
