@@ -242,6 +242,7 @@ export const OPS = {
 		a: {
 			igUserId: string;
 			items: CarouselItem[];
+			userTags?: { username: string; x: number; y: number }[]; // ← ADD THIS
 			caption?: string;
 			pollSec: number;
 			maxWaitSec: number;
@@ -254,14 +255,6 @@ export const OPS = {
 		const childIds: string[] = [];
 
 		for (const it of a.items) {
-			// Normalize userTags for each item (UI + JSON compatible)
-			const rawTags = (it as any).userTags ?? it.userTags ?? {};
-			const userTags = Array.isArray(rawTags?.tag)
-				? rawTags.tag
-				: Array.isArray(rawTags)
-					? rawTags
-					: [];
-
 			const child = await igCreateContainer(
 				ctx,
 				i,
@@ -271,14 +264,14 @@ export const OPS = {
 							igUserId: a.igUserId,
 							url: it.url,
 							caption: it.caption,
-							userTags, // ← ADDED
+							it.userTags, // ← ADDED
 						}
 					: {
 							kind: 'CAROUSEL_CHILD_VIDEO',
 							igUserId: a.igUserId,
 							url: it.url,
 							caption: it.caption,
-							userTags, // ← ADDED (IG accepts this)
+							it.userTags, // ← ADDED (IG accepts this)
 						},
 			);
 
